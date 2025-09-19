@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Plan Alimenticio</title>
+<style>
+  :root{--green:#1f7a42;--green-2:#145a31;--paper:#fff;--ink:#113422;--bg1:#e4f6ec;--bg2:#d0f0dc}
+  *{box-sizing:border-box}
+  body{
+    margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial;color:var(--ink);
+    background:repeating-linear-gradient(45deg,var(--bg1),var(--bg1) 20px,var(--bg2) 20px,var(--bg2) 40px);
+  }
+  .topbar{
+    position:sticky;top:0;z-index:20;backdrop-filter:saturate(140%) blur(6px);
+    background:#1f7a42e0;color:#fff;display:flex;justify-content:center;gap:10px;padding:10px 12px
+  }
+  .btn{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+  .btn.primary{background:#26a95d;color:#fff}
+  .btn.ghost{background:transparent;color:#fff;border:1px solid #ffffff66}
+  main{max-width:980px;margin:16px auto 24px;padding:0 14px}
+  .card{background:var(--paper);border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,.08);padding:18px;margin-bottom:14px}
+  h2{margin:0 0 10px;color:var(--green-2);font-size:22px}
+  .grid{display:grid;gap:12px}
+  @media (min-width:760px){.grid-2{grid-template-columns:1fr 1fr}}
+  label{display:block;font-weight:600;margin:4px 0}
+  .field{display:flex;flex-direction:column;gap:6px}
+  input,select{padding:10px 12px;border:1px solid #cfe2d7;border-radius:10px;font-size:15px;background:#fff}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .btn.alt{background:#e9f5ee;color:var(--green-2)}
+  .pill{display:inline-block;background:#e9f6ef;color:#1e5e35;border:1px solid #bfe7cf;padding:6px 10px;border-radius:999px;font-size:13px;margin:4px 6px 0 0}
+  #planImg{width:100%;height:auto;border-radius:12px;border:1px solid #e6ece8;margin-top:10px}
+  .hide{display:none}
+</style>
+</head>
+<body>
+  <!-- Barra superior con 2 botones -->
+  <div class="topbar">
+    <button class="btn ghost" id="btnEmpezar">Empezar</button>
+    <button class="btn primary" id="btnHacerEncuesta">Hacer encuesta</button>
+  </div>
+
+  <main>
+    <!-- ENCUESTA 1 (paso 1) -->
+    <section class="card" id="step1">
+      <h2>Encuesta 1</h2>
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="peso">Peso (kg)</label>
+          <input id="peso" type="number" min="0" step="0.1" placeholder="Ej.: 72.5">
+        </div>
+        <div class="field">
+          <label for="altura">Altura (cm)</label>
+          <input id="altura" type="number" min="0" step="1" placeholder="Ej.: 172">
+        </div>
+        <div class="field">
+          <label for="objetivo">Objetivo</label>
+          <select id="objetivo" required>
+            <option value="" selected disabled>Elegí una opción</option>
+            <option>Ganar músculo</option>
+            <option>Perder grasa</option>
+            <option>Mantenimiento</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="edad">Edad</label>
+          <select id="edad" required>
+            <option value="" selected disabled>Elegí una opción</option>
+            <option>15-18</option>
+            <option>19-25</option>
+            <option>26-30</option>
+            <option>+30</option>
+          </select>
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label for="deporte">¿Qué deporte hacés?</label>
+          <input id="deporte" type="text" placeholder="Ej.: fútbol, gimnasio, correr…">
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="toStep2">Siguiente</button>
+      </div>
+    </section>
+
+    <!-- ENCUESTA 2 (paso 2; oculta hasta que se aprieta “Siguiente”) -->
+    <section class="card hide" id="step2">
+      <h2>Encuesta 2</h2>
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="dieta">Dieta</label>
+          <select id="dieta" required>
+            <option value="" selected disabled>Elegí una opción</option>
+            <option>Carnívoro</option>
+            <option>Vegetariano</option>
+            <option>Vegano</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="horas">Horas de entrenamiento por semana</label>
+          <input id="horas" type="number" min="0" step="0.5" placeholder="Ej.: 4">
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label>Días que entrenás</label>
+          <div id="diasList" style="display:flex;gap:10px;flex-wrap:wrap">
+            <label><input type="checkbox" value="Lun"> Lun</label>
+            <label><input type="checkbox" value="Mar"> Mar</label>
+            <label><input type="checkbox" value="Mié"> Mié</label>
+            <label><input type="checkbox" value="Jue"> Jue</label>
+            <label><input type="checkbox" value="Vie"> Vie</label>
+            <label><input type="checkbox" value="Sáb"> Sáb</label>
+            <label><input type="checkbox" value="Dom"> Dom</label>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn alt" id="back1">Volver</button>
+        <button class="btn primary" id="finish">Ver mi plan</button>
+      </div>
+    </section>
+
+    <!-- RESULTADO -->
+    <section class="card hide" id="result">
+      <h2>Resultado</h2>
+      <div id="resumen"></div>
+      <img id="planImg" alt="Plan asignado">
+      <div class="actions">
+        <button class="btn alt" id="reset">Elegir de nuevo</button>
+      </div>
+    </section>
+  </main>
+
+<script>
+  // --- Mapeo 1..36 (no se muestra al usuario) ---
+  const EDADES = ["15-18","19-25","26-30","+30"];
+  const DIETAS = ["Carnívoro","Vegetariano","Vegano"];
+  const OBJETIVOS = ["Ganar músculo","Perder grasa","Mantenimiento"];
+  function filaFrom(edad,dieta,objetivo){
+    const ai = EDADES.indexOf(edad);
+    const di = DIETAS.indexOf(dieta);
+    const oi = OBJETIVOS.indexOf(objetivo);
+    if(ai<0||di<0||oi<0) return null;
+    return ai*9 + di*3 + oi + 1; // 1..36
+  }
+
+  // --- DOM ---
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
+  const result= document.getElementById('result');
+  const btnEmpezar = document.getElementById('btnEmpezar');
+  const btnHacer   = document.getElementById('btnHacerEncuesta');
+
+  const edadEl = document.getElementById('edad');
+  const dietaEl= document.getElementById('dieta');
+  const objEl  = document.getElementById('objetivo');
+  const pesoEl = document.getElementById('peso');
+  const altEl  = document.getElementById('altura');
+  const depEl  = document.getElementById('deporte');
+  const horasEl= document.getElementById('horas');
+  const diasSel= ()=>[...document.querySelectorAll('#diasList input:checked')].map(i=>i.value);
+
+  const planImg= document.getElementById('planImg');
+  const resumen= document.getElementById('resumen');
+
+  // Topbar buttons → scroll a la encuesta 1
+  btnEmpezar.addEventListener('click', ()=> step1.scrollIntoView({behavior:'smooth'}));
+  btnHacer  .addEventListener('click', ()=> step1.scrollIntoView({behavior:'smooth'}));
+
+  // Paso 1 → Paso 2
+  document.getElementById('toStep2').addEventListener('click', ()=>{
+    if(!edadEl.value || !objEl.value){
+      alert('Completá Edad y Objetivo.'); return;
+    }
+    step1.classList.add('hide');
+    step2.classList.remove('hide');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+
+  // Volver a Paso 1
+  document.getElementById('back1').addEventListener('click', ()=>{
+    step2.classList.add('hide');
+    step1.classList.remove('hide');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+
+  // Intentar varias extensiones si falta .png (sin mostrar lógica al usuario)
+  function cargarConFallback(base, exts, cb){
+    const tryNext = ()=>{
+      if(exts.length===0){ cb(null); return; }
+      const ext = exts.shift();
+      const path = `${base}.${ext}`;
+      const img = new Image();
+      img.onload = ()=> cb(path);
+      img.onerror= ()=> tryNext();
+      img.src = path;
+    };
+    tryNext();
+  }
+
+  // Ver plan
+  document.getElementById('finish').addEventListener('click', ()=>{
+    if(!dietaEl.value){ alert('Elegí tu Dieta.'); return; }
+    const fila = filaFrom(edadEl.value, dietaEl.value, objEl.value);
+    if(!fila){ alert('Revisá los campos.'); return; }
+
+    // Resumen visual (sin revelar reglas)
+    const chips = [
+      `Edad: ${edadEl.value}`,
+      `Objetivo: ${objEl.value}`,
+      `Dieta: ${dietaEl.value}`
+    ];
+    const opt=[];
+    if(pesoEl.value) opt.push(`Peso: ${pesoEl.value} kg`);
+    if(altEl.value)  opt.push(`Altura: ${altEl.value} cm`);
+    if(depEl.value)  opt.push(`Deporte: ${depEl.value}`);
+    if(horasEl.value)opt.push(`Horas/sem: ${horasEl.value}`);
+    const d = diasSel(); if(d.length) opt.push(`Días: ${d.join(', ')}`);
+
+    resumen.innerHTML = chips.map(t=>`<span class="pill">${t}</span>`).join(' ')
+      + (opt.length? `<div style="margin-top:6px">${opt.map(t=>`<span class="pill">${t}</span>`).join(' ')}</div>` : '');
+
+    // Cargar imagen del plan (busca .png → .PNG → .jpg → .jpeg → .webp)
+    const base = `img/fila${fila}`;
+    cargarConFallback(base, ['png','PNG','jpg','jpeg','webp'], (foundPath)=>{
+      if(!foundPath){
+        alert('No se pudo mostrar el plan. Verificá que exista el archivo correspondiente en la carpeta /img.');
+        return;
+      }
+      planImg.src = foundPath;
+      step2.classList.add('hide');
+      result.classList.remove('hide');
+      result.scrollIntoView({behavior:'smooth'});
+    });
+  });
+
+  // Reiniciar
+  document.getElementById('reset').addEventListener('click', ()=>{
+    [pesoEl,altEl,depEl,horasEl].forEach(i=>i.value='');
+    [edadEl,dietaEl,objEl].forEach(s=>s.selectedIndex=0);
+    document.querySelectorAll('#diasList input:checked').forEach(i=>i.checked=false);
+    planImg.removeAttribute('src');
+    result.classList.add('hide');
+    step1.classList.remove('hide');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+</script>
+</body>
+</html>
